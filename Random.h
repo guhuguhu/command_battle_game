@@ -1,0 +1,1 @@
+int from1toNRandom(int n);
