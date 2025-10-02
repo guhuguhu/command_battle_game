@@ -1,0 +1,62 @@
+#include <iostream>
+#include <vector>
+#include "Technique.h"
+
+class Creature {
+public:
+    const std::string name;
+private:
+    int hp; //hp
+    int max_hp; //最大hp
+    const int power; //力
+    const int speed; //速さ
+    const int defence; //硬さ
+    std::vector<const Technique*> learned_techs; //覚えている技
+
+public:
+    Creature(std::string n, int h, int p, int s, int d);
+
+    Creature(std::string n, int h, int p, int s, int d, std::vector<const Technique*> &t);
+
+    bool winSpeed(const Creature &m) const;
+
+    bool isDowned() const;
+
+    void displayHp() const;
+    
+    void learn_tech(const Technique *tech); 
+
+    void lost_tech(const Technique *tech);
+
+    const Technique *getTech(const int i) const;
+
+    int getNTech() const;
+
+    void techAttack(const Technique *tech, Creature *cre);
+
+    void recoveryAllHp();
+
+    void damaged(int d);
+    const Technique *randomTech() const;
+
+};
+
+class Player: public Creature {
+private:
+    int mp; //mp
+    int max_mp; //最大mp
+
+public:
+    Player(std::string n, int h, int p, int s, int d, int mp);
+    void showTechs(bool onlyCan) const;
+    void displayMp() const;
+    void recoveryAllMp();
+    int getMp() const; 
+    void techAttack(const Technique *tech, Creature *creature);
+    bool canTech(Technique* tech) const; 
+};
+
+class Monster: public Creature {
+public:    
+    Monster(std::string n, int h, int p, int s, int d, std::vector<const Technique*> tech);
+};

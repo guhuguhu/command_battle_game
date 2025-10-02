@@ -24,7 +24,7 @@ void Battle::winnerJudge() {
     }
 }
 
-void Battle::displayAllMonsHpMp () const {
+void Battle::displayAllCreaturesHpMp () const {
     player->displayHp();
     player->displayMp();
     monster->displayHp();
@@ -32,20 +32,20 @@ void Battle::displayAllMonsHpMp () const {
 // m1, m2それぞれの攻撃を1回ずつ行う。スピードが高い方が先制攻撃できる。勝者の名前を返す。決着がつかない場合はnobodyを返す
 void Battle::start_turn () {
     std::cout << std::endl << "turn" << turn+1 << std::endl;
-    displayAllMonsHpMp();
+    displayAllCreaturesHpMp();
 
     const Technique *tech = input_tech();
 
-    Monster *mons[2];
+    Creature *cres[2];
     if (player->winSpeed(*monster)) {
-        mons[0] = player; 
-        mons[1] = monster;
+        cres[0] = player; 
+        cres[1] = monster;
     } else {
-        mons[0] = monster; 
-        mons[1] = player;
+        cres[0] = monster; 
+        cres[1] = player;
     }
     for (int i=0; i<2; i++) {
-        mons[i]->techAttack(tech, mons[(i+1)%2]);
+        cres[i]->techAttack(tech, cres[(i+1)%2]);
         winnerJudge();
     }
     turn++;

@@ -1,4 +1,4 @@
-#include "Monster.h"
+#include "Creature.h"
 #include <map>
 #include <tuple>
 
@@ -17,5 +17,5 @@ public:
     const Technique *input_tech();
     Monster *randomTarget();
     void winnerJudge();
-    void displayAllMonsHpMp() const;
+    void displayAllCreaturesHpMp() const;
 };
