@@ -97,7 +97,6 @@ void Player::displayMp() const {
 //覚えている技を表示する。onlyCanがtrueのときはmpが足りていて使える技のみ表示する
 void Player::showTechs(bool onlyCan = false) const {
     int n = getNTech();
-    assert(n > 0);
 
     std::cout << std::endl;
     for (int i = 0; i < n; i++) {
