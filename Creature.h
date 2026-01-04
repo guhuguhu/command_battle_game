@@ -12,6 +12,8 @@ private:
     const int power; //力
     const int speed; //速さ
     const int defence; //硬さ
+
+protected:
     std::vector<std::shared_ptr<const Technique>> learned_techs; //覚えている技
 
 public:
@@ -29,10 +31,6 @@ public:
 
     void lost_tech(std::shared_ptr<const Technique> tech);
 
-    std::shared_ptr<const Technique> getTech(const int i) const;
-
-    int getNTech() const;
-
     void techAttack(std::shared_ptr<const Technique> tech, std::shared_ptr<Creature> cre);
 
     void recoveryAllHp();
@@ -49,7 +47,7 @@ private:
 
 public:
     Player(std::string n, int h, int p, int s, int d, int mp);
-    void showTechs(bool onlyCan) const;
+    std::vector<std::shared_ptr<const Technique>> getCanTechs() const;
     void displayMp() const;
     void recoveryAllMp();
     int getMp() const; 

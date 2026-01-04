@@ -1,5 +1,5 @@
 #include <iostream>
-#include <cassert>
+#include <list>
 #include <memory>
 #include "Creature.h"
 #include "Random.h"
@@ -16,9 +16,8 @@ bool Creature::winSpeed(const Creature &cre) const {
 
 std::shared_ptr<const Technique> Creature::randomTech() const {
     int n = learned_techs.size();
-    assert(n > 0);
     int n_tech = from1toNRandom(n);
-    return getTech(n_tech - 1);
+    return learned_techs[n_tech - 1];
 }
 
 bool Creature::isDowned() const {
@@ -44,10 +43,6 @@ void Creature::lost_tech(std::shared_ptr<const Technique> tech) {
     }
 } 
 
-std::shared_ptr<const Technique> Creature::getTech(const int i) const {
-    return learned_techs[i];
-}
-
 void Creature::damaged(int d) {
     if (hp >= d) {
         hp -= d;
@@ -67,11 +62,6 @@ void Creature::techAttack(std::shared_ptr<const Technique> tech, std::shared_ptr
         cre->damaged(d);
         std::cout << d << " damage" << std::endl;
     }
-}
-
-//覚えている技の数を取得
-int Creature::getNTech() const{
-    return learned_techs.size();
 }
 
 //hpを全回復する
@@ -94,18 +84,15 @@ void Player::displayMp() const {
     std::cout << name << " mp " << mp << std::endl; 
 }
 
-//覚えている技を表示する。onlyCanがtrueのときはmpが足りていて使える技のみ表示する
-void Player::showTechs(bool onlyCan = false) const {
-    int n = getNTech();
-
-    std::cout << std::endl;
-    for (int i = 0; i < n; i++) {
-        auto tech = getTech(i);
-        if (!onlyCan || tech->getMp() < mp) {
-            std::cout << i + 1 << ". ";
-            getTech(i)->show();
+//mpが足りていて使える技のみ返す
+std::vector<std::shared_ptr<const Technique>> Player::getCanTechs() const {
+    std::vector<std::shared_ptr<const Technique>> can_techs;
+    for (auto tech : learned_techs) {
+        if (tech->getMp() <= mp) {
+            can_techs.push_back(tech);
         }
     }
+    return can_techs;
 }
 
 void Player::recoveryAllMp() {

@@ -5,22 +5,23 @@
 Battle::Battle(std::shared_ptr<Player> p, std::shared_ptr<Monster> m) : turn(0), player(p), monster(m){}
 
 std::shared_ptr<const Technique> Battle::input_tech() {
-    player->showTechs(true);
-    int n_techs = player->getNTech();
+    auto can_techs = player->getCanTechs();
+    int i = 1;
+    std::cout << std::endl;
+    for (auto tech : can_techs) {
+        std::cout << i << ". ";
+        tech->show();
+        i++;
+    }
     std::cout << std::endl;
     std::cout << "choose number of Technique." << std::endl;
+    int tech_i;
     while (true) {
-        int tech_i;
         std::cin >> tech_i;
-        if (tech_i < 1 || tech_i > n_techs) {
-            std::cout << "choose correct number" << std::endl;
-        } else {
-            auto chosen_tech = player->getTech(tech_i - 1);
-            if (player->getMp() >= chosen_tech->getMp()) {
-                return chosen_tech;
-            }
-        }
+        if (tech_i >= 1 && tech_i < i) break;
+        std::cout << "choose correct number" << std::endl;
     }
+    return can_techs[tech_i - 1];
 }
 
 void Battle::winnerJudge() {
