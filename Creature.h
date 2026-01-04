@@ -59,4 +59,5 @@ public:
 class Monster: public Creature {
 public:    
     Monster(std::string n, int h, int p, int s, int d, std::vector<const Technique*> tech);
+    void randomAttack(Creature *cre);
 };

@@ -53,7 +53,7 @@ void Creature::damaged(int d) {
     hp -= d;
 }
 
-//ある技で攻撃
+//指定された技で攻撃
 void Creature::techAttack(const Technique *tech, Creature *m) {
     std::cout << std::endl << name << " " << tech->name << " " << m->name << std::endl;
     int offense = tech->culOffense(power);
@@ -77,6 +77,12 @@ void Creature::recoveryAllHp() {
 }
 
 Monster::Monster(std::string n, int h, int p, int s, int d, std::vector<const Technique*> tech) : Creature(n, h, p, s, d, tech) {};
+
+//ランダムの技で攻撃
+void Monster::randomAttack(Creature *m) {
+    const Technique *tech = randomTech();
+    techAttack(tech, m);
+}
 
 Player::Player(std::string n, int h, int p, int s, int d, int mp) : 
 mp(mp), max_mp(mp), Creature(n, h, p, s, d) {};

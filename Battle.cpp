@@ -38,15 +38,13 @@ void Battle::start_turn () {
 
     Creature *cres[2];
     if (player->winSpeed(*monster)) {
-        cres[0] = player; 
-        cres[1] = monster;
-    } else {
-        cres[0] = monster; 
-        cres[1] = player;
-    }
-    for (int i=0; i<2; i++) {
-        cres[i]->techAttack(tech, cres[(i+1)%2]);
+        player->techAttack(tech, monster);
         winnerJudge();
+        monster->randomAttack(player);
+    } else {
+        monster->randomAttack(player);
+        winnerJudge();
+        player->techAttack(tech, monster);
     }
     turn++;
 }
