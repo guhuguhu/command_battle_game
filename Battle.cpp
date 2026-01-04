@@ -33,8 +33,7 @@ void Battle::winnerJudge() {
 }
 
 void Battle::displayAllCreaturesHpMp () const {
-    player->displayHp();
-    player->displayMp();
+    player->displayHpMp();
     monster->displayHp();
 }
 // m1, m2それぞれの攻撃を1回ずつ行う。スピードが高い方が先制攻撃できる。勝者の名前を返す。決着がつかない場合はnobodyを返す

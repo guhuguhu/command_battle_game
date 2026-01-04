@@ -80,8 +80,8 @@ void Monster::randomAttack(std::shared_ptr<Creature> cre) {
 Player::Player(std::string n, int h, int p, int s, int d, int mp) : 
 mp(mp), max_mp(mp), Creature(n, h, p, s, d) {};
 
-void Player::displayMp() const {
-    std::cout << name << " mp " << mp << std::endl; 
+void Player::displayHpMp() const {
+    std::cout << name << " hp " << hp << " mp " << mp << std::endl; 
 }
 
 //mpが足りていて使える技のみ返す

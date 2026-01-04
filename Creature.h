@@ -7,13 +7,13 @@ class Creature {
 public:
     const std::string name;
 private:
-    int hp; //hp
     int max_hp; //最大hp
     const int power; //力
     const int speed; //速さ
     const int defence; //硬さ
 
 protected:
+    int hp; //hp
     std::vector<std::shared_ptr<const Technique>> learned_techs; //覚えている技
 
 public:
@@ -48,7 +48,7 @@ private:
 public:
     Player(std::string n, int h, int p, int s, int d, int mp);
     std::vector<std::shared_ptr<const Technique>> getCanTechs() const;
-    void displayMp() const;
+    void displayHpMp() const;
     void recoveryAllMp();
     int getMp() const; 
     void techAttack(std::shared_ptr<const Technique> tech, std::shared_ptr<Creature> cre);
