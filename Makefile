@@ -4,16 +4,11 @@ SRCS=$(wildcard *.cpp)
 OBJS=$(SRCS:.cpp=.o)
 INCS=$(wildcard *.hpp)
 
-game: $(OBJS)
-	g++ -o  game $(OBJS) $(LDFLAGS)
+command_battle_game: $(OBJS)
+	g++ -o command_battle_game $(OBJS) $(LDFLAGS)
 
 $(OBJS): $(INCS) $(SRCS)
 	$(CC) $(CFLAGS) $(INCDIR) -c $(SRCS)
 
-test: game
-	./test.sh
-
 clean:
-	rm -f game *.o *~ tmp*
-
-.PHONY: test clean
+	rm -f command_battle_game *.o *~ tmp*
