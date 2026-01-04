@@ -10,7 +10,7 @@
 constexpr int M_STATUS_COUNT = 6; //モンスターのステータスの個数
 
 //Technique.csvから技をロード
-void load_Technique(std::map<std::string, std::shared_ptr<const Technique>> &techs) {
+void load_Technique(std::vector<std::shared_ptr<const Technique>> &techs) {
     std::ifstream ifs("./Technique.csv");
     std::string line;
     while (getline(ifs, line)) {
@@ -19,7 +19,7 @@ void load_Technique(std::map<std::string, std::shared_ptr<const Technique>> &tec
         int i = 0;        
         while (getline(line_, status[i++], ',')) {}
         auto tech = std::make_shared<Technique>(status[0], stoi(status[1]), stoi(status[2]), stoi(status[3]));
-        techs[status[0]] = tech;
+        techs.push_back(tech);
     }
 }
 
@@ -40,7 +40,7 @@ std::shared_ptr<Player> init_Player() {
 }
 
 //Monster.csvからモンスターのステイタスをロード
-void load_Monster(std::map<std::string, std::unique_ptr<Monster>> &monsters, std::map<std::string, std::shared_ptr<const Technique>> &techs) {
+void load_Monster(std::list<std::shared_ptr<Monster>> &monsters, std::vector<std::shared_ptr<const Technique>> &techs) {
     std::ifstream ifs("./Monster.csv");
     std::string line;
     while (getline(ifs, line)) {
@@ -48,40 +48,31 @@ void load_Monster(std::map<std::string, std::unique_ptr<Monster>> &monsters, std
         std::string status[M_STATUS_COUNT];
         int i = 0;        
         while (getline(line_, status[i++], ',')) {}
-        auto tech = techs[status[5]];
-        std::vector<std::shared_ptr<const Technique>> learned_tech;
-        learned_tech.push_back(tech);
-        auto m = std::make_unique<Monster>(status[0], stoi(status[1]), stoi(status[2]), stoi(status[3]), stoi(status[4]), learned_tech);
-        monsters[status[0]] = std::move(m);
+        auto mon = std::make_shared<Monster>(status[0], stoi(status[1]), stoi(status[2]), stoi(status[3]), stoi(status[4]), techs);
+        monsters.push_back(mon);
     }
 }
 
 int main() {
-    constexpr int M_COUNT = 3; //バトルするモンスターの数
-    constexpr int T_COUNT = 3; //プレイヤーが覚える技の数
-    std::map<std::string, std::shared_ptr<const Technique>> techniques;
+    std::vector<std::shared_ptr<const Technique>> techniques;
     load_Technique(techniques);
 
-    std::map<std::string, std::unique_ptr<Monster>> monsters;
+    std::list<std::shared_ptr<Monster>> monsters;
     load_Monster(monsters, techniques);
-
 
     auto player = init_Player();
 
     std::cout << std::endl << std::endl;
 
-    std::string t_list[T_COUNT] = {"tackle","punch","kick"};
-    for (int i=0;i<T_COUNT;i++) {
-        player->learn_tech(techniques[t_list[i]]);
+    for (auto tech : techniques) {
+        player->learn_tech(tech);
     }
 
-    std::string m_list[M_COUNT] = {"m1","m2","m3"};
-
     bool clear = true; // trueであれば全勝。クリア
+    int i = 1;
     //モンスターと順にバトル
-    for (int i=0;i<M_COUNT;i++) {
-        std::cout << std::endl << std::endl << "round" << i+1 << std::endl;
-        auto monster = std::make_shared<Monster>(*monsters[m_list[i]]);
+    for (auto monster : monsters) {
+        std::cout << std::endl << std::endl << "round" << i << std::endl;
         std::cout << monster->name << " appear" << std::endl;
         Battle battle(player, monster);
         clear &= battle.start_battle();
@@ -90,6 +81,7 @@ int main() {
         // hpとmpを全回復 
         player->recoveryAllHp();
         player->recoveryAllMp();
+        i++;
     } 
 
     //全勝したらクリア
