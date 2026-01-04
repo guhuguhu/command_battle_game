@@ -1,19 +1,20 @@
 #include <iostream>
 #include <cassert>
+#include <memory>
 #include "Creature.h"
 #include "Random.h"
 
 Creature::Creature(std::string n, int h, int p, int s, int d) :
 name(n), hp(h), max_hp(h), power(p), speed(s), defence(d) {};
 
-Creature::Creature(std::string n, int h, int p, int s, int d, std::vector<const Technique*> &t) :
+Creature::Creature(std::string n, int h, int p, int s, int d, std::vector<std::shared_ptr<const Technique>> &t) :
 name(n), hp(h), max_hp(h), power(p), speed(s), defence(d), learned_techs(t) {};
 
-bool Creature::winSpeed(const Creature &c) const {
-        return speed > c.speed;
+bool Creature::winSpeed(const Creature &cre) const {
+        return speed > cre.speed;
 }
 
-const Technique *Creature::randomTech() const {
+std::shared_ptr<const Technique> Creature::randomTech() const {
     int n = learned_techs.size();
     assert(n > 0);
     int n_tech = from1toNRandom(n);
@@ -29,13 +30,13 @@ void Creature::displayHp() const {
 }
 
 //技を覚える
-void Creature::learn_tech(const Technique *tech) {
+void Creature::learn_tech(std::shared_ptr<const Technique> tech) {
     learned_techs.push_back(tech);
     std::cout << name << " learn " << tech->name << std::endl;
 } 
 
 //技を忘れる
-void Creature::lost_tech(const Technique *tech) {
+void Creature::lost_tech(std::shared_ptr<const Technique> tech) {
     for (auto t = learned_techs.begin(); t < learned_techs.end(); t++) {
         if ((*t)->name == tech->name) {
             learned_techs.erase(t);
@@ -45,7 +46,7 @@ void Creature::lost_tech(const Technique *tech) {
     }
 } 
 
-const Technique *Creature::getTech(const int i) const {
+std::shared_ptr<const Technique> Creature::getTech(const int i) const {
     return learned_techs[i];
 }
 
@@ -54,14 +55,14 @@ void Creature::damaged(int d) {
 }
 
 //指定された技で攻撃
-void Creature::techAttack(const Technique *tech, Creature *m) {
-    std::cout << std::endl << name << " " << tech->name << " " << m->name << std::endl;
+void Creature::techAttack(std::shared_ptr<const Technique> tech, std::shared_ptr<Creature> cre) {
+    std::cout << std::endl << name << " " << tech->name << " " << cre->name << std::endl;
     int offense = tech->culOffense(power);
     if (offense == -1) {
         std::cout << "don't hit" << std::endl;
     } else {
-        int d = offense / m->defence + 1;
-        m->damaged(d);
+        int d = offense / cre->defence + 1;
+        cre->damaged(d);
         std::cout << d << " damage" << std::endl;
     }
 }
@@ -76,12 +77,12 @@ void Creature::recoveryAllHp() {
     hp = max_hp;
 }
 
-Monster::Monster(std::string n, int h, int p, int s, int d, std::vector<const Technique*> tech) : Creature(n, h, p, s, d, tech) {};
+Monster::Monster(std::string n, int h, int p, int s, int d, std::vector<std::shared_ptr<const Technique>> tech) : Creature(n, h, p, s, d, tech) {};
 
 //ランダムの技で攻撃
-void Monster::randomAttack(Creature *m) {
-    const Technique *tech = randomTech();
-    techAttack(tech, m);
+void Monster::randomAttack(std::shared_ptr<Creature> cre) {
+    const auto tech = randomTech();
+    techAttack(tech, cre);
 }
 
 Player::Player(std::string n, int h, int p, int s, int d, int mp) : 
@@ -98,7 +99,7 @@ void Player::showTechs(bool onlyCan = false) const {
 
     std::cout << std::endl;
     for (int i = 0; i < n; i++) {
-        const Technique *tech = getTech(i);
+        auto tech = getTech(i);
         if (!onlyCan || tech->getMp() < mp) {
             std::cout << i + 1 << ". ";
             getTech(i)->show();
@@ -115,7 +116,7 @@ int Player::getMp() const {
 }
 
 //ある技で攻撃
-void Player::techAttack(const Technique *tech, Creature *c) {
+void Player::techAttack(std::shared_ptr<const Technique> tech, std::shared_ptr<Creature> cre) {
     mp -= tech->getMp();
-    Creature::techAttack(tech, c);
+    Creature::techAttack(tech, cre);
 }

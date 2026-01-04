@@ -2,9 +2,9 @@
 #include <list>
 #include <cassert>
 
-Battle::Battle(Player *p, Monster *m) : turn(0), player(p), monster(m){}
+Battle::Battle(std::shared_ptr<Player> p, std::shared_ptr<Monster> m) : turn(0), player(p), monster(m){}
 
-const Technique *Battle::input_tech() {
+std::shared_ptr<const Technique> Battle::input_tech() {
     player->showTechs(true);
     int n_techs = player->getNTech();
     assert(n_techs > 0);
@@ -34,9 +34,8 @@ void Battle::start_turn () {
     std::cout << std::endl << "turn" << turn+1 << std::endl;
     displayAllCreaturesHpMp();
 
-    const Technique *tech = input_tech();
+    const auto tech = input_tech();
 
-    Creature *cres[2];
     if (player->winSpeed(*monster)) {
         player->techAttack(tech, monster);
         winnerJudge();
