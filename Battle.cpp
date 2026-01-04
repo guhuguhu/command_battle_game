@@ -7,7 +7,6 @@ Battle::Battle(std::shared_ptr<Player> p, std::shared_ptr<Monster> m) : turn(0),
 std::shared_ptr<const Technique> Battle::input_tech() {
     player->showTechs(true);
     int n_techs = player->getNTech();
-    assert(n_techs > 0);
 
     std::cout << std::endl;
     std::cout << "choose number of Technique." << std::endl;
