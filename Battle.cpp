@@ -40,11 +40,15 @@ void Battle::start_turn () {
     if (player->winSpeed(*monster)) {
         player->techAttack(tech, monster);
         winnerJudge();
+        if (winner != "") return;
         monster->randomAttack(player);
+        winnerJudge();
     } else {
         monster->randomAttack(player);
         winnerJudge();
+        if (winner != "") return;
         player->techAttack(tech, monster);
+        winnerJudge();
     }
     turn++;
 }
