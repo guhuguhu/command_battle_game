@@ -32,7 +32,6 @@ void Creature::displayHp() const {
 //技を覚える
 void Creature::learn_tech(std::shared_ptr<const Technique> tech) {
     learned_techs.push_back(tech);
-    std::cout << name << " learn " << tech->name << std::endl;
 } 
 
 //技を忘れる
@@ -40,7 +39,6 @@ void Creature::lost_tech(std::shared_ptr<const Technique> tech) {
     for (auto t = learned_techs.begin(); t < learned_techs.end(); t++) {
         if ((*t)->name == tech->name) {
             learned_techs.erase(t);
-            std::cout << name << " lost " << (*t)->name << std::endl;
             break;
         }
     }

@@ -7,66 +7,71 @@
 #include "Random.h"
 #include "Battle.h"
 
-constexpr int M_STATUS_COUNT = 6; //モンスターのステータスの個数
-
 //Technique.csvから技をロード
-void load_Technique(std::vector<std::shared_ptr<const Technique>> &techs) {
+void load_Technique(std::map<std::string, std::shared_ptr<const Technique>> &techs) {
     std::ifstream ifs("./Technique.csv");
     std::string line;
     while (getline(ifs, line)) {
         std::istringstream line_(line);
-        std::string status[M_STATUS_COUNT];
-        int i = 0;        
-        while (getline(line_, status[i++], ',')) {}
+        std::vector<std::string> status;
+        std::string s;
+        while (getline(line_, s, ',')) {
+            status.push_back(s);
+        }
         auto tech = std::make_shared<Technique>(status[0], stoi(status[1]), stoi(status[2]), stoi(status[3]));
-        techs.push_back(tech);
+        techs[status[0]] = tech;
     }
 }
 
 //プレイヤーの初期化。Player.csvからプレイヤーのステイタスをロード。名前をプレイヤーが入力
-std::shared_ptr<Player> init_Player() {
+std::shared_ptr<Player> init_Player(std::map<std::string, std::shared_ptr<const Technique>> techs) {
     std::ifstream ifs("./Player.csv");
     std::string line;
     getline(ifs, line);
     std::istringstream line_(line);
-    std::string status[M_STATUS_COUNT];
-    int i = 0;        
-    while (getline(line_, status[i++], ',')) {}
+    std::vector<std::string> status;
+    std::string s;
+    while (getline(line_, s, ',')) {
+        status.push_back(s);
+    }
     std::cout << "Please input name." << std::endl;
     std::string Player_name;
     std::cin >> Player_name;
-    auto p = std::make_shared<Player>(Player_name, stoi(status[0]), stoi(status[1]), stoi(status[2]), stoi(status[3]), stoi(status[4]));
-    return p;
+    auto player = std::make_shared<Player>(Player_name, stoi(status[0]), stoi(status[1]), stoi(status[2]), stoi(status[3]), stoi(status[4]));
+    for (int j = 5; j < status.size(); j++) {
+        player->learn_tech(techs[status[j]]);
+    }
+    return player;
 }
 
 //Monster.csvからモンスターのステイタスをロード
-void load_Monster(std::list<std::shared_ptr<Monster>> &monsters, std::vector<std::shared_ptr<const Technique>> &techs) {
+void load_Monster(std::list<std::shared_ptr<Monster>> &monsters, std::map<std::string, std::shared_ptr<const Technique>> &techs) {
     std::ifstream ifs("./Monster.csv");
     std::string line;
     while (getline(ifs, line)) {
         std::istringstream line_(line);
-        std::string status[M_STATUS_COUNT];
-        int i = 0;        
-        while (getline(line_, status[i++], ',')) {}
-        auto mon = std::make_shared<Monster>(status[0], stoi(status[1]), stoi(status[2]), stoi(status[3]), stoi(status[4]), techs);
-        monsters.push_back(mon);
+        std::vector<std::string> status;
+        std::string s;
+        while (getline(line_, s, ',')) {
+            status.push_back(s);
+        }
+        std::vector<std::shared_ptr<const Technique>> mons_techs;
+        for (int j = 5; j < status.size(); j++) {
+            mons_techs.push_back(techs[status[j]]);
+        }
+        auto mons = std::make_shared<Monster>(status[0], stoi(status[1]), stoi(status[2]), stoi(status[3]), stoi(status[4]), mons_techs);
+        monsters.push_back(mons);
     }
 }
 
 int main() {
-    std::vector<std::shared_ptr<const Technique>> techniques;
+    std::map<std::string, std::shared_ptr<const Technique>> techniques;
     load_Technique(techniques);
 
     std::list<std::shared_ptr<Monster>> monsters;
     load_Monster(monsters, techniques);
 
-    auto player = init_Player();
-
-    std::cout << std::endl << std::endl;
-
-    for (auto tech : techniques) {
-        player->learn_tech(tech);
-    }
+    auto player = init_Player(techniques);
 
     bool clear = true; // trueであれば全勝。クリア
     int i = 1;

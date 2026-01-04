@@ -5,7 +5,7 @@ OBJS=$(SRCS:.cpp=.o)
 INCS=$(wildcard *.hpp)
 
 command_battle_game: $(OBJS)
-	g++ -o command_battle_game $(OBJS) $(LDFLAGS)
+	g++ -g -o command_battle_game $(OBJS) $(LDFLAGS)
 
 $(OBJS): $(INCS) $(SRCS)
 	$(CC) $(CFLAGS) $(INCDIR) -c $(SRCS)
