@@ -49,7 +49,11 @@ std::shared_ptr<const Technique> Creature::getTech(const int i) const {
 }
 
 void Creature::damaged(int d) {
-    hp -= d;
+    if (hp >= d) {
+        hp -= d;
+    } else {
+        hp = 0;
+    }
 }
 
 //指定された技で攻撃
