@@ -21,7 +21,7 @@ std::shared_ptr<const Technique> Creature::randomTech() const {
 }
 
 bool Creature::isDowned() const {
-    return hp <= 0;
+    return hp == 0;
 }
 
 void Creature::displayHp() const {
